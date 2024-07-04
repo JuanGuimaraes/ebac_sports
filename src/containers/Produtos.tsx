@@ -1,43 +1,39 @@
+import React from 'react'
+import { useDispatch } from 'react-redux'
+import { useGetProdutosQuery } from '../services/api'
+import { adicionarAoCarrinho, favoritar } from '../store/reducers/carrinho'
 import { Produto as ProdutoType } from '../App'
-import Produto from '../components/Produto'
 
-import * as S from './styles'
-
-type Props = {
-  produtos: ProdutoType[]
-  favoritos: ProdutoType[]
-  adicionarAoCarrinho: (produto: ProdutoType) => void
-  favoritar: (produto: ProdutoType) => void
-}
-
-const ProdutosComponent = ({
-  produtos,
-  favoritos,
-  adicionarAoCarrinho,
-  favoritar
-}: Props) => {
-  const produtoEstaNosFavoritos = (produto: ProdutoType) => {
-    const produtoId = produto.id
-    const IdsDosFavoritos = favoritos.map((f) => f.id)
-
-    return IdsDosFavoritos.includes(produtoId)
-  }
+const Produto: React.FC<{ produto: ProdutoType }> = ({ produto }) => {
+  const dispatch = useDispatch()
 
   return (
-    <>
-      <S.Produtos>
-        {produtos.map((produto) => (
-          <Produto
-            estaNosFavoritos={produtoEstaNosFavoritos(produto)}
-            key={produto.id}
-            produto={produto}
-            favoritar={favoritar}
-            aoComprar={adicionarAoCarrinho}
-          />
-        ))}
-      </S.Produtos>
-    </>
+    <div key={produto.id}>
+      <h3>{produto.nome}</h3>
+      <button onClick={() => dispatch(adicionarAoCarrinho(produto))}>
+        Adicionar ao Carrinho
+      </button>
+      <button onClick={() => dispatch(favoritar(produto.id))}>
+        {produto.isFavorited
+          ? 'Remover dos Favoritos'
+          : 'Adicionar aos Favoritos'}
+      </button>
+    </div>
   )
 }
 
-export default ProdutosComponent
+const Produtos: React.FC = () => {
+  const { data: produtos, isLoading } = useGetProdutosQuery()
+
+  if (isLoading) return <h2>Carregando...</h2>
+
+  return (
+    <div>
+      {produtos?.map((produto: ProdutoType) => (
+        <Produto key={produto.id} produto={produto} />
+      ))}
+    </div>
+  )
+}
+
+export default Produtos
