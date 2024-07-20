@@ -9,7 +9,6 @@ const paraReal = (valor: number): string => {
 }
 
 const Header: React.FC = () => {
-  const dispatch = useDispatch()
   const itens = useSelector((state: RootState) => state.carrinho.produtos)
   const favoritos = itens.filter((item) => item.isFavorited)
 

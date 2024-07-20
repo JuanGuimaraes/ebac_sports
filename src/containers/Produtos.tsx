@@ -3,22 +3,34 @@ import { useDispatch } from 'react-redux'
 import { useGetProdutosQuery } from '../services/api'
 import { adicionarAoCarrinho, favoritar } from '../store/reducers/carrinho'
 import { Produto as ProdutoType } from '../App'
+import * as S from './styles'
+
+export const paraReal = (valor: number) =>
+  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+    valor
+  )
 
 const Produto: React.FC<{ produto: ProdutoType }> = ({ produto }) => {
   const dispatch = useDispatch()
 
   return (
-    <div key={produto.id}>
-      <h3>{produto.nome}</h3>
-      <button onClick={() => dispatch(adicionarAoCarrinho(produto))}>
+    <S.Produtos key={produto.id}>
+      <S.Capa>
+        <img src={produto.imagem} alt={produto.nome} />
+      </S.Capa>
+      <S.Titulo>{produto.nome}</S.Titulo>
+      <S.Prices>
+        <strong>{paraReal(produto.preco)}</strong>
+      </S.Prices>
+      <S.BtnComprar onClick={() => dispatch(adicionarAoCarrinho(produto))}>
         Adicionar ao Carrinho
-      </button>
-      <button onClick={() => dispatch(favoritar(produto.id))}>
+      </S.BtnComprar>
+      <S.BtnComprar onClick={() => dispatch(favoritar(produto.id))}>
         {produto.isFavorited
           ? 'Remover dos Favoritos'
           : 'Adicionar aos Favoritos'}
-      </button>
-    </div>
+      </S.BtnComprar>
+    </S.Produtos>
   )
 }
 
